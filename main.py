@@ -1,4 +1,4 @@
-"just an official example code"
+#just an official example code
 
 from flask import Flask, request, abort
 
@@ -22,8 +22,8 @@ from linebot.v3.webhooks import (
 
 app = Flask(__name__)
 
-configuration = Configuration(access_token='YOUR_CHANNEL_ACCESS_TOKEN')
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+configuration = Configuration(access_token='2008538110')
+handler = WebhookHandler('7ef91bb1e711fdba619995dacb0339ec')
 
 
 @app.route("/callback", methods=['POST'])
