@@ -16,12 +16,15 @@ from linebot.v3.messaging import (
     Configuration,
     ApiClient,
     MessagingApi,
+    MessagingApiBlob,
     ReplyMessageRequest,
-    TextMessage
+    TextMessage,
+    ImageMessage,
 )
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
+    ImageMessageContent,
     FollowEvent,
     UnfollowEvent
 )
@@ -73,7 +76,7 @@ def handle_message(event):
     user_message = event.message.text.lower().strip() # get message from user
     print(f"msg from user: {user_message}")
 
-    reply = "This is a mmessage for checking the function is work successfully"
+    reply = "This is a message for checking the function is work successfully"
 
     
     with ApiClient(configuration) as api_client:
@@ -82,6 +85,28 @@ def handle_message(event):
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=reply)]
+            )
+        )
+
+@handler.add(MessageEvent, message=ImageMessageContent)
+def handle_image(event):
+    with ApiClient(configuration) as api_client:
+        # Use MessagingApiBlob to download the image
+        blob_api = MessagingApiBlob(api_client)
+        message_content = blob_api.get_message_content(message_id=event.message.id)
+        
+        # Save the image
+        SAVE_DIR = "."
+        file_path = os.path.join(SAVE_DIR, f"{event.message.id}.jpg")
+        with open(file_path, 'wb') as f:
+            f.write(message_content)
+        
+        # Reply to user
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.reply_message(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=f"Got your image! \nSaved as {event.message.id}.jpg")]
             )
         )
 
