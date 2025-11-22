@@ -9,4 +9,5 @@ dependencies = [
     "line-bot-sdk>=3.21.0",
     "numpy>=2.3.5",
     "faiss-cpu>=1.13.0",
+    "python-dotenv>=1.2.1",
 ]

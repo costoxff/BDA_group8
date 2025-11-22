@@ -1,5 +1,9 @@
 #just an offical example code
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 from flask import Flask, request, abort
 
 from linebot.v3 import (
@@ -22,8 +26,8 @@ from linebot.v3.webhooks import (
 
 app = Flask(__name__)
 
-configuration = Configuration(access_token='YOUR_CHANNEL_ACCESS_TOKEN')
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+configuration = Configuration(access_token=os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
+handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 
 
 @app.route("/callback", methods=['POST'])
