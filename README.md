@@ -7,3 +7,31 @@
 after installation, `uv sync` can update the environment
 
 `uv run [filename].py` to run the code
+
+## Miscellaneous points
+
+Documents should probably be stored in AWS or something in the future. Folder for it for now.
+
+Currently just some random information in the documents.
+
+Currently uses ollama as this is free
+
+## Running RAG
+The process is a bit long, but won't be needed if we switch to OpenAI (though it's currently free, OpenAI API will cost)
+
+Ollama is needed (at least before we switch to OpenAI), can be downloaded at <a href="https://ollama.com/download" target="_blank">https://ollama.com/download</a>
+
+Next, you need to pull the embedding model with:
+'''
+ollama pull mxbai-embed-large
+'''
+and the chat model with
+'''
+ollama pull llama3
+'''
+
+To run RAG.py, you need to serve it. Call
+'''
+ollama serve
+'''
+in a separate terminal (make sure to exit the ollama program as this will occupe the port otherwise)

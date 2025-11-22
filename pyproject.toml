@@ -7,4 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "flask>=3.1.2",
     "line-bot-sdk>=3.21.0",
+    "numpy>=2.3.5",
+    "faiss-cpu>=1.13.0",
 ]
