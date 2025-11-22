@@ -21,7 +21,9 @@ from linebot.v3.messaging import (
 )
 from linebot.v3.webhooks import (
     MessageEvent,
-    TextMessageContent
+    TextMessageContent,
+    FollowEvent,
+    UnfollowEvent
 )
 
 app = Flask(__name__)
@@ -48,17 +50,41 @@ def callback():
 
     return 'OK'
 
-
-@handler.add(MessageEvent, message=TextMessageContent)
-def handle_message(event):
+@handler.add(FollowEvent)
+def handle_follow(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=event.message.text)]
+                messages=[TextMessage(text="Hello! Thanks for adding me! 🎉\nHow can I help you today?")]
             )
         )
+
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    user_id = event.source.user_id
+    app.logger.info(f"User {user_id} unfollowed")
+
+
+
+@handler.add(MessageEvent, message=TextMessageContent)
+def handle_message(event):
+    user_message = event.message.text.lower().strip() # get message from user
+    print(f"msg from user: {user_message}")
+
+    reply = "This is a mmessage for checking the function is work successfully"
+
+    
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=reply)]
+            )
+        )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=25565)
