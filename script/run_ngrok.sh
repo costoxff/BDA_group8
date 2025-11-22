@@ -6,4 +6,4 @@ if [ -n $1 ]; then
     port=$1
 fi
 
-ngork http ${port}
+ngrok http ${port}
