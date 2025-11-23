@@ -1,5 +1,16 @@
 # Advance Care Planning Agent
 
+## Recent Updates
+
+### Conversation Memory System
+The bot now includes conversation history functionality that allows it to maintain context across multiple interactions. Each user's conversation is tracked separately and the system can reference previous exchanges to provide more coherent and contextual responses.
+
+**New Features:**
+- Persistent conversation tracking per user
+- Context-aware responses using conversation history
+- Commands to manage conversation history (clear, show history)
+- Enhanced prompt engineering for better contextual understanding
+
 ## Environment
 
 [Installing uv](https://docs.astral.sh/uv/getting-started/installation/)

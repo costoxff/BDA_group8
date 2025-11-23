@@ -50,7 +50,59 @@ ANSWER:
     return ollama_chat(prompt, model=model)
 
 
+def rag_answer_with_memory(question, rag, user_id, memory, model="llama3"):
+    """
+    Answer a question using RAG with conversation history
+    
+    Args:
+        question: User's current question
+        rag: RAG instance for document retrieval
+        user_id: User identifier for conversation history
+        memory: ConversationMemory instance
+        model: LLM model to use
+        
+    Returns:
+        Answer string
+    """
+    # Retrieve relevant documents from RAG
+    retrieved = rag.retrieve(question)
+    document_context = "\n\n---\n\n".join([r["chunk"] for r in retrieved])
+    
+    # Retrieve conversation history
+    conversation_history = memory.format_history_for_prompt(user_id)
+    
+    # Build enhanced prompt with conversation history and document context
+    prompt = f"""You are a helpful AI assistant with access to both document knowledge and conversation history.
+
+{conversation_history}
+INSTRUCTIONS:
+1. Use the conversation history above to maintain context and continuity
+2. Reference previous exchanges when relevant to the current question
+3. Use the document context below as your primary knowledge source
+4. If the question relates to something discussed earlier, acknowledge it
+5. Be conversational and natural while staying accurate to the documents
+
+DOCUMENT CONTEXT:
+{document_context}
+
+CURRENT QUESTION FROM USER:
+{question}
+
+YOUR RESPONSE:
+"""
+    
+    # Get answer from LLM
+    answer = ollama_chat(prompt, model=model)
+    
+    # Store this exchange in conversation history
+    memory.add_exchange(user_id, question, answer)
+    
+    return answer
+
+
 if __name__ == "__main__":
+    from conversation_memory import ConversationMemory
+    
     print("Building RAG index...")
 
     # RAG loads all documents, chunks them, embeds them (via Ollama), and builds FAISS
@@ -62,14 +114,26 @@ if __name__ == "__main__":
 
     print("Index built.")
     print("")
+    
+    # Initialize conversation memory
+    memory = ConversationMemory(storage_dir="conversation_history", max_history=10)
+    
+    # Use default user_id for now (until user functionality is implemented)
+    user_id = "user"
 
     # Example query
     question = "What does the third document talk about?"
 
-    print(f":{question}")
+    print(f"Question: {question}")
     print("")
 
-    answer = rag_answer(question, rag, model="llama3")
+    # Use the new function with memory
+    answer = rag_answer_with_memory(question, rag, user_id, memory, model="llama3")
 
     print("ANSWER:")
     print(answer)
+    print("")
+    
+    # Show conversation count
+    count = memory.get_conversation_count(user_id)
+    print(f"Total conversations for {user_id}: {count}")

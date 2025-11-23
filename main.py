@@ -29,10 +29,24 @@ from linebot.v3.webhooks import (
     UnfollowEvent
 )
 
+# Import RAG and conversation memory
+from RAG import RAG
+from LLM import rag_answer_with_memory
+from conversation_memory import ConversationMemory
+
 app = Flask(__name__)
 
 configuration = Configuration(access_token=os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
+
+# Initialize RAG and conversation memory globally
+print("Initializing RAG system...")
+rag_system = RAG(client=None, folder="documents", batch_size=5)
+print("RAG system initialized.")
+
+print("Initializing conversation memory...")
+conversation_memory = ConversationMemory(storage_dir="conversation_history", max_history=10)
+print("Conversation memory initialized.")
 
 
 @app.route("/callback", methods=['POST'])
@@ -73,12 +87,41 @@ def handle_unfollow(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    user_message = event.message.text.lower().strip() # get message from user
-    print(f"msg from user: {user_message}")
-
-    reply = "This is a message for checking the function is work successfully"
-
+    # Get user_id from LINE event (or use "user" as default for now)
+    user_id = getattr(event.source, 'user_id', 'user')
+    user_message = event.message.text.strip()  # get message from user
     
+    print(f"Message from user {user_id}: {user_message}")
+    
+    # Check for special commands
+    if user_message.lower() in ['clear', 'reset', 'clear history', 'reset history']:
+        if conversation_memory.clear_history(user_id):
+            reply = "Your conversation history has been cleared! 🗑️"
+        else:
+            reply = "You don't have any conversation history yet."
+    
+    elif user_message.lower() in ['history', 'show history', 'my history']:
+        count = conversation_memory.get_conversation_count(user_id)
+        if count > 0:
+            reply = f"You have {count} conversation(s) in your history. 📚"
+        else:
+            reply = "You don't have any conversation history yet. Start chatting!"
+    
+    else:
+        # Get answer using RAG with conversation memory
+        try:
+            reply = rag_answer_with_memory(
+                question=user_message,
+                rag=rag_system,
+                user_id=user_id,
+                memory=conversation_memory,
+                model="llama3"
+            )
+        except Exception as e:
+            print(f"Error processing message: {e}")
+            reply = "Sorry, I encountered an error processing your request. Please try again. 🤔"
+    
+    # Send reply
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         line_bot_api.reply_message_with_http_info(
