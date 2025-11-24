@@ -76,11 +76,12 @@ def rag_answer_with_memory(question, rag, user_id, memory, model="llama3"):
 
 {conversation_history}
 INSTRUCTIONS:
-1. Use the conversation history above to maintain context and continuity
-2. Reference previous exchanges when relevant to the current question
-3. Use the document context below as your primary knowledge source
-4. If the question relates to something discussed earlier, acknowledge it
-5. Be conversational and natural while staying accurate to the documents
+1. Use the conversation history above to maintain context and continuity, but only if there is relevant history.
+2. Use the document context below as your primary knowledge source
+3. If the question relates to something discussed earlier, acknowledge it
+4. Be conversational and natural while staying accurate to the documents.
+5. Do not explicitly mention the use of documents in your answers, unless it makes sense for the question.
+6. Be concise, unless asked otherwise.
 
 DOCUMENT CONTEXT:
 {document_context}
@@ -121,19 +122,22 @@ if __name__ == "__main__":
     # Use default user_id for now (until user functionality is implemented)
     user_id = "user"
 
-    # Example query
-    question = "What does the third document talk about?"
+    while True:
+        # Example query
+        question = input("Question (Q to quit): ")
+        if question.upper() == 'Q':
+            print("Quit LLM.")
+            break
 
-    print(f"Question: {question}")
-    print("")
+        print("")
 
-    # Use the new function with memory
-    answer = rag_answer_with_memory(question, rag, user_id, memory, model="llama3")
+        # Use the new function with memory
+        answer = rag_answer_with_memory(question, rag, user_id, memory, model="llama3")
 
-    print("ANSWER:")
-    print(answer)
-    print("")
-    
-    # Show conversation count
-    count = memory.get_conversation_count(user_id)
-    print(f"Total conversations for {user_id}: {count}")
+        print("ANSWER:")
+        print(answer)
+        print("")
+        
+        # Show conversation count
+        count = memory.get_conversation_count(user_id)
+        print(f"Total conversations for {user_id}: {count}")

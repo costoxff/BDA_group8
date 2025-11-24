@@ -46,3 +46,4 @@ To run RAG.py, you need to serve it. Call
 ollama serve
 '''
 in a separate terminal (make sure to exit the ollama program as this will occupe the port otherwise)
+You can then run LLM normally
