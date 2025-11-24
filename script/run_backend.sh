@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uv run main.py
+uv run main.py --port 25565

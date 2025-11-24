@@ -1,9 +1,3 @@
-#just an offical example code
-
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
 from flask import Flask, request, abort
 
 from linebot.v3 import (
@@ -29,10 +23,19 @@ from linebot.v3.webhooks import (
     UnfollowEvent
 )
 
+### load token from .env
+from dotenv import load_dotenv
+load_dotenv()
+###
+import os
+
 # Import RAG and conversation memory
 from utils.RAG import RAG
 from LLM import rag_answer_with_memory
 from utils.conversation_memory import ConversationMemory
+
+# helper function from utils
+from utils.args import parse_arguments
 
 app = Flask(__name__)
 
@@ -155,4 +158,5 @@ def handle_image(event):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=25565)
+    args = parse_arguments()
+    app.run(host=args.host, port=args.port)
