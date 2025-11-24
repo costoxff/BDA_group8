@@ -30,9 +30,9 @@ from linebot.v3.webhooks import (
 )
 
 # Import RAG and conversation memory
-from RAG import RAG
+from utils.RAG import RAG
 from LLM import rag_answer_with_memory
-from conversation_memory import ConversationMemory
+from utils.conversation_memory import ConversationMemory
 
 app = Flask(__name__)
 

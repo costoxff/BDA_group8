@@ -2,7 +2,7 @@ import json
 import os
 import faiss
 import numpy as np
-from text_processing import get_chunks, embed_batch_ollama
+from utils.text_processing import get_chunks, embed_batch_ollama
 
 
 class RAG:

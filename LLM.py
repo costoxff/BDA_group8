@@ -1,7 +1,7 @@
 import requests
 
-from RAG import RAG
-from ollama_client import safe_post, CHAT_URL
+from utils.RAG import RAG
+from utils.ollama_client import safe_post, CHAT_URL
 
 def ollama_chat(prompt, model="llama3"):
     r = safe_post(
@@ -102,7 +102,7 @@ YOUR RESPONSE:
 
 
 if __name__ == "__main__":
-    from conversation_memory import ConversationMemory
+    from utils.conversation_memory import ConversationMemory
     
     print("Building RAG index...")
 
