@@ -118,7 +118,7 @@ def handle_message(event):
                 rag=rag_system,
                 user_id=user_id,
                 memory=conversation_memory,
-                model="llama3"
+                model=args.model
             )
         except Exception as e:
             print(f"Error processing message: {e}")
