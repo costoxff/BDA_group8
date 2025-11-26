@@ -13,11 +13,9 @@ The bot now includes conversation history functionality that allows it to mainta
 
 ## Environment
 
-[Installing uv](https://docs.astral.sh/uv/getting-started/installation/)
+Please install [uv](https://docs.astral.sh/uv/getting-started/installation/), a Python package and project manager.
 
-after installation, `uv sync` can update the environment
-
-`uv run [filename].py` to run the code
+after that, `uv sync` to update the environment and `uv run main.py` to run the app (if all backend setting is done).
 
 ## Miscellaneous points
 
