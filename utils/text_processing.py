@@ -2,14 +2,29 @@ import glob
 import numpy as np
 import requests
 
+import markdown
+from bs4 import BeautifulSoup
+from pathlib import Path
+
 
 def load_text_files(folder="documents"):
-    files = glob.glob(f"{folder}/*.txt")
+    txt_files = glob.glob(f"{folder}/*.txt")
+    md_files = glob.glob(f"{folder}/*.md")
+
+    all_files =  txt_files + md_files
+
     docs = []
 
-    for path in files:
+    for path in all_files:
+        file_ext = Path(path).suffix.lower()
+
         with open(path, "r", encoding="utf-8") as f:
-            docs.append((path, f.read()))
+            content = f.read()
+
+        if file_ext == ".md":
+            content = markdown_to_text(content)
+        
+        docs.append((path, content))
     return docs
 
 
@@ -65,3 +80,26 @@ def embed_batch(client, texts):
 
 def embed_batch_ollama(texts, model="mxbai-embed-large"):
     return embed_ollama(texts, model)
+
+
+def markdown_to_text(markdown_content):
+    html = markdown.markdown(
+        markdown_content,
+        extensions=[
+            'extra', 
+            'codehilite',
+            'toc',
+            'nl2br'
+        ]
+    )
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    for tag in soup(['script', 'style']):
+        tag.decompose()
+    
+    text = soup.get_text(separator='\n', strip=True)
+    
+    lines = [line.strip() for line in text.split('\n')]
+    text = '\n'.join(line for line in lines if line)
+    
+    return text
