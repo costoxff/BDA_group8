@@ -111,13 +111,12 @@ def handle_message(event):
             reply = f"You have {count} conversation(s) in your history. 📚"
         else:
             reply = "You don't have any conversation history yet. Start chatting!"
-    elif user_message.lower() in ['send']:
-        email = 'r12922a09@ntu.edu.tw'
+    elif user_message.lower() in ['send'] and args.email != None:
 
         text, path = summarize_user_knowledge(user_name=user_id, model=args.model)
 
         #success = send_email_with_attachment(
-        #    to_email=email,
+        #    to_email=args.email,
         #    subject="ACP Helper 總結",
         #    body="感謝使用本服務,請查收附件。",
         #    file_path=path

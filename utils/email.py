@@ -8,9 +8,8 @@ def send_email_with_attachment(to_email, subject, body, file_path):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     sender_email = "your-email@gmail.com"
-    sender_password = "your-app-password"  # 使用應用程式密碼,不是 Gmail 密碼
+    sender_password = "your-app-password"
     
-    # 建立郵件
     msg = MIMEMultipart()
     msg['From'] = sender_email
     msg['To'] = to_email
@@ -36,5 +35,5 @@ def send_email_with_attachment(to_email, subject, body, file_path):
         server.quit()
         return True
     except Exception as e:
-        print(f"發送失敗: {e}")
+        print(f"failed: {e}")
         return False
