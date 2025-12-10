@@ -216,5 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-conversation_history
-rag
+
+# custom ignore
+knowledge_summaries/
+conversation_history/
+rag/
