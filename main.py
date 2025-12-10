@@ -25,9 +25,9 @@ from linebot.v3.webhooks import (
 
 
 # Import RAG and conversation memory
-from utils.RAG import RAG
+from utils.agent.RAG import RAG
 from LLM import rag_answer_with_memory
-from utils.conversation_memory import ConversationMemory
+from utils.agent.conversation_memory import ConversationMemory
 from summarizer import summarize_user_knowledge
 
 # helper function from utils
