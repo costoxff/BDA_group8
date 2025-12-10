@@ -99,19 +99,20 @@ def handle_message(event):
     print(f"Message from user {user_id}: {user_message}")
     
     # Check for special commands
-    if user_message.lower() in ['clear', 'reset', 'clear history', 'reset history']:
+    if user_message.lower() in ['!clear', '!reset', '!clear history', '!reset history']:
         if conversation_memory.clear_history(user_id):
             reply = "Your conversation history has been cleared! 🗑️"
         else:
             reply = "You don't have any conversation history yet."
     
-    elif user_message.lower() in ['history', 'show history', 'my history']:
+    elif user_message.lower() in ['!history', '!show history', '!my history']:
         count = conversation_memory.get_conversation_count(user_id)
         if count > 0:
             reply = f"You have {count} conversation(s) in your history. 📚"
         else:
             reply = "You don't have any conversation history yet. Start chatting!"
-    elif user_message.lower() in ['send'] and args.email != None:
+
+    elif user_message.lower() in ['!send'] and args.email != None:
 
         text, path = summarize_user_knowledge(user_name=user_id, model=args.model)
 
