@@ -39,7 +39,7 @@ please check the file `.env` is as same level as main.py
 
 1. run `uv sync` to install dependency and update environment. 
 
-2. run `uv run main.py` to run the bot server or your can write your own start script. (the example is in script/run_backend.sh)
+2. run `uv run main.py` to run the bot server or your can write your own start script. (the example is in [script/run_backend.sh](../script/run_backend.sh))
 
 > For more coding information please check [line-bot-sdk-python](https://github.com/line/line-bot-sdk-python)
 
