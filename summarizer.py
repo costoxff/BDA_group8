@@ -28,6 +28,7 @@ def summarize_user_knowledge(
     # Can adjust if needed
     prompt = f"""Summarize what the user appears to know about Advanced Care Planning (ACP) based on the following conversation history.
 Focus on facts/topics the user has asked about or been told. Avoid guessing at motivations or adding new facts.
+Finally, users are scored on their level of understanding of ACP. The lowest possible score is 0.0, and the highest possible score is 10.0. 
 
 CONVERSATION HISTORY:
 {history_text}
