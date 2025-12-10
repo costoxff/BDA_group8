@@ -23,11 +23,6 @@ from linebot.v3.webhooks import (
     UnfollowEvent
 )
 
-### load token from .env
-from dotenv import load_dotenv
-load_dotenv()
-###
-import os
 
 # Import RAG and conversation memory
 from utils.RAG import RAG
@@ -36,13 +31,14 @@ from utils.conversation_memory import ConversationMemory
 from summarizer import summarize_user_knowledge
 
 # helper function from utils
+import utils.env
 from utils.args import parse_arguments
 from utils.email import send_email_with_attachment
 
 app = Flask(__name__)
 
-configuration = Configuration(access_token=os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
-handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
+configuration = Configuration(access_token=utils.env.LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(utils.env.LINE_CHANNEL_SECRET)
 
 # Initialize RAG and conversation memory globally
 print("Initializing RAG system...")
@@ -116,13 +112,17 @@ def handle_message(event):
 
         text, path = summarize_user_knowledge(user_name=user_id, model=args.model)
 
-        #success = send_email_with_attachment(
-        #    to_email=args.email,
-        #    subject="ACP Helper 總結",
-        #    body="感謝使用本服務,請查收附件。",
-        #    file_path=path
-        #)
-        reply = 'email send to....'
+        success = send_email_with_attachment(
+            to_email=args.email,
+            subject="ACP Helper 總結",
+            body="感謝使用本服務,請查收附件。",
+            file_path=path
+        )
+
+        if success:
+            reply = '已寄出信件'
+        else:
+            reply = '信件寄送失敗'
     
     else:
         # Get answer using RAG with conversation memory
