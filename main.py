@@ -33,9 +33,11 @@ import os
 from utils.RAG import RAG
 from LLM import rag_answer_with_memory
 from utils.conversation_memory import ConversationMemory
+from summarizer import summarize_user_knowledge
 
 # helper function from utils
 from utils.args import parse_arguments
+from utils.email import send_email_with_attachment
 
 app = Flask(__name__)
 
@@ -109,6 +111,18 @@ def handle_message(event):
             reply = f"You have {count} conversation(s) in your history. 📚"
         else:
             reply = "You don't have any conversation history yet. Start chatting!"
+    elif user_message.lower() in ['send']:
+        email = 'r12922a09@ntu.edu.tw'
+
+        text, path = summarize_user_knowledge(user_name=user_id)
+
+        #success = send_email_with_attachment(
+        #    to_email=email,
+        #    subject="ACP Helper 總結",
+        #    body="感謝使用本服務,請查收附件。",
+        #    file_path=path
+        #)
+        reply = 'email send to....'
     
     else:
         # Get answer using RAG with conversation memory
