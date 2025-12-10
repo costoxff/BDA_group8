@@ -114,7 +114,7 @@ def handle_message(event):
     elif user_message.lower() in ['send']:
         email = 'r12922a09@ntu.edu.tw'
 
-        text, path = summarize_user_knowledge(user_name=user_id)
+        text, path = summarize_user_knowledge(user_name=user_id, model=args.model)
 
         #success = send_email_with_attachment(
         #    to_email=email,
