@@ -1,4 +1,4 @@
-import utils.env
+from utils.env import SENDER_EMAIL, SENDER_PASSWORD
 
 import smtplib
 from email.mime.text import MIMEText
@@ -9,8 +9,8 @@ from email import encoders
 def send_email_with_attachment(to_email, subject, body, file_path=None):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    sender_email = utils.env.SENDER_EMAIL
-    sender_password = utils.env.SENDER_PASSWORD
+    sender_email = SENDER_EMAIL
+    sender_password = SENDER_PASSWORD
     
     msg = MIMEMultipart()
     msg['From'] = sender_email
