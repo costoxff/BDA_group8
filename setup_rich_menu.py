@@ -52,7 +52,7 @@ def create_rich_menu():
                     bounds=RichMenuBounds(x=0, y=0, width=834, height=843),
                     action=PostbackAction(
                         label='諮詢專線',
-                        data='action=call'
+                        data='call'
                     )
                 ),
                 RichMenuArea(
@@ -61,7 +61,7 @@ def create_rich_menu():
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=1667, y=0, width=833, height=843),
-                    action=PostbackAction(label='回饋選單', data='action=survey')
+                    action=PostbackAction(label='問答總結', data='send')
                 )
             ]
         )
@@ -164,7 +164,7 @@ def create_test_image():
     areas = [
         (0, 0, 833, 843, colors[0], '諮詢專線'),
         (833, 0, 1667, 843, colors[1], '動畫影片'),
-        (1667, 0, 2500, 843, colors[2], '回饋選單'),
+        (1667, 0, 2500, 843, colors[2], '問答總結'),
     ]
     
     for x1, y1, x2, y2, color, text in areas:
