@@ -24,6 +24,7 @@ from linebot.v3.webhooks import (
     PostbackEvent
 )
 
+import threading
 
 # Import RAG and conversation memory
 from utils.agent.RAG import RAG
@@ -137,7 +138,7 @@ def handle_message(event):
             )
         except Exception as e:
             print(f"Error processing message: {e}")
-            reply = "Sorry, I encountered an error processing your request. Please try again. 🤔"
+            reply = "Sorry, I encountered an error processing your request. Please try again."
     
     # Send reply
     with ApiClient(configuration) as api_client:
@@ -173,23 +174,46 @@ def handle_image(event):
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
+    user_id = getattr(event.source, 'user_id', 'user')
     data = event.postback.data
 
-    with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
 
-        if data == 'action=call':
-            reply = """預立醫療照護諮商為自費，諮商費用依衛生主管機關之規定辦理。
+    if data == 'call':
+        reply = """預立醫療照護諮商為自費，諮商費用依衛生主管機關之規定辦理。
 預立醫療照護諮商提供門診、病房服務，另對特殊需求的病友提供遠距視訊等三種諮商模式，
 正式諮商前皆提供事前的電話解說，解說後再行預約，有預約相關問題請洽詢以下單位。
 臺大醫院輔助暨整合醫學中心 (02)2312-3456轉分機266986、266987"""
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=reply)]
-                )
-            )
+        
+    if data == 'send' and args.email != None:
+        text, path = summarize_user_knowledge(user_name=user_id, model=args.model)
 
+        def send_task(target_email, attachment_path):
+            success = send_email_with_attachment(
+                to_email=target_email,
+                subject="ACP Helper 總結",
+                body="感謝使用本服務,請查收附件。",
+                file_path=attachment_path
+            )
+            if success:
+                print(f'已寄出信件 (背景執行完成)')
+            else:
+                print(f'信件寄送失敗 (背景執行完成)')
+        email_thread = threading.Thread(target=send_task, args=(args.email, path))
+        email_thread.start()
+        print("sending email on background")
+
+        reply = text
+
+    # Send reply
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=reply)]
+            )
+        )
+       
 
 
 if __name__ == "__main__":
