@@ -61,7 +61,7 @@ def create_rich_menu():
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=1667, y=0, width=833, height=843),
-                    action=MessageAction(label='回饋選單', text='feedback')
+                    action=PostbackAction(label='回饋選單', data='action=survey')
                 )
             ]
         )
@@ -156,7 +156,7 @@ def delete_all_rich_menus():
 def create_test_image():
     from PIL import Image, ImageDraw, ImageFont
     
-    img = Image.new('RGB', (2500, 843), color='#f0f0f0')
+    img = Image.new('RGB', (2500, 843), color="#000000")
     draw = ImageDraw.Draw(img)
     
     colors = ['#FFA07A', '#4ECDC4', '#45B7D1']
@@ -169,14 +169,13 @@ def create_test_image():
     
     for x1, y1, x2, y2, color, text in areas:
         draw.rectangle([x1, y1, x2, y2], fill=color)
-        draw.rectangle([x1, y1, x2, y2], outline='white', width=5)
+        draw.rectangle([x1, y1, x2, y2], outline='white', width=2)
 
         try:
-            font = ImageFont.truetype("NotoSansTC-Medium.ttf", 100)
+            font = ImageFont.truetype("NotoSansTC-Medium.ttf", 150)
         except:
             font = ImageFont.load_default()
 
-        font = ImageFont.load_default(size=200)
 
         bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
@@ -184,6 +183,8 @@ def create_test_image():
         
         text_x = x1 + (x2 - x1 - text_width) // 2
         text_y = y1 + (y2 - y1 - text_height) // 2
+
+        text_y -= 30
 
         shadow_offset = 3
 
