@@ -26,14 +26,22 @@ def summarize_user_knowledge(
         raise ValueError(f"Conversation history for '{user_name}' is empty.")
 
     # Can adjust if needed
-    prompt = f"""Summarize what the user appears to know about Advanced Care Planning (ACP) based on the following conversation history.
-Focus on facts/topics the user has asked about or been told. Avoid guessing at motivations or adding new facts.
-Finally, users are scored on their level of understanding of ACP. The lowest possible score is 0.0, and the highest possible score is 10.0. 
+#    prompt = f"""Summarize what the user appears to know about Advanced Care Planning (ACP) based on the following conversation history.
+#Focus on facts/topics the user has asked about or been told. Avoid guessing at motivations or adding new facts.
+#
+#CONVERSATION HISTORY:
+#{history_text}
+#
+#SUMMARY:"""
 
-CONVERSATION HISTORY:
+
+    prompt = f"""根據以下對話記錄，總結使用者對預立醫療照護諮商（ACP）的認知現狀。
+請聚焦於使用者曾詢問或被告知的事實/主題，避免推測動機或添加新資訊。
+
+對話歷史紀錄:
 {history_text}
 
-SUMMARY:"""
+總結:"""
 
     summary_text = ollama_chat(prompt, model=model).strip()
 
