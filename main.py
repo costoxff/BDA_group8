@@ -20,7 +20,8 @@ from linebot.v3.webhooks import (
     TextMessageContent,
     ImageMessageContent,
     FollowEvent,
-    UnfollowEvent
+    UnfollowEvent,
+    PostbackEvent
 )
 
 
@@ -31,14 +32,14 @@ from utils.agent.conversation_memory import ConversationMemory
 from summarizer import summarize_user_knowledge
 
 # helper function from utils
-import utils.env
+from utils.env import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
 from utils.args import parse_arguments
 from utils.email import send_email_with_attachment
 
 app = Flask(__name__)
 
-configuration = Configuration(access_token=utils.env.LINE_CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(utils.env.LINE_CHANNEL_SECRET)
+configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 # Initialize RAG and conversation memory globally
 print("Initializing RAG system...")
@@ -75,7 +76,7 @@ def handle_follow(event):
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text="Hello! Thanks for adding me! 🎉\nHow can I help you today?")]
+                messages=[TextMessage(text="Hello! Thanks for adding me! \nHow can I help you today?")]
             )
         )
 
@@ -169,6 +170,26 @@ def handle_image(event):
                 messages=[TextMessage(text=f"Got your image! \nSaved as {event.message.id}.jpg")]
             )
         )
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    data = event.postback.data
+
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+
+        if data == 'action=call':
+            reply = """預立醫療照護諮商為自費，諮商費用依衛生主管機關之規定辦理。
+預立醫療照護諮商提供門診、病房服務，另對特殊需求的病友提供遠距視訊等三種諮商模式，
+正式諮商前皆提供事前的電話解說，解說後再行預約，有預約相關問題請洽詢以下單位。
+臺大醫院輔助暨整合醫學中心 (02)2312-3456轉分機266986、266987"""
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text=reply)]
+                )
+            )
+
 
 
 if __name__ == "__main__":
